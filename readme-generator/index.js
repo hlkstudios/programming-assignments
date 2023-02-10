@@ -177,6 +177,38 @@ const promptForTests = () => {
             addLine("## Tests\n");
             addLine(tests);
         }
+        promptForMedia();
+    });
+};
+
+const promptForMedia = () => {
+    console.log(
+        "Enter the file paths of any images or videos to include in the README (press CTRL + D when finished, leave empty to skip):"
+    );
+    readline.prompt();
+
+    let media = "";
+
+    readline.on("line", (input) => {
+        if (input) {
+            if (
+                input.endsWith(".png") ||
+                input.endsWith(".jpg") ||
+                input.endsWith(".jpeg")
+            ) {
+                media += `![image](${input})\n`;
+            } else if (input.endsWith(".mp4") || input.endsWith(".gif")) {
+                media += `<video src="${input}" width="320" height="240" controls></video>\n`;
+            }
+        }
+        readline.prompt();
+    });
+
+    readline.on("close", () => {
+        if (media) {
+            addLine("## Media\n");
+            addLine(media);
+        }
         writeToFile();
     });
 };
@@ -186,7 +218,7 @@ const writeToFile = () => {
         if (err) {
             console.error(err);
         } else {
-            console.log("README.md was generated successfully!");
+            console.log("README.md successfully generated!");
         }
     });
 };
