@@ -1,219 +1,207 @@
+const inquirer = require("inquirer");
 const fs = require("fs");
-const readline = require("readline").createInterface({
-    input: process.stdin,
-    output: process.stdout,
-});
 
 let readme = "";
 
 const addLine = (line) => {
-    readme += line + "\n";
+    readme += `${line}\n`;
 };
 
-const promptForTitle = () => {
-    console.log("Enter the title for your README file:");
-    readline.prompt();
-
-    readline.on("line", (input) => {
-        addLine(`# ${input}`);
-        promptForDescription();
-    });
+const promptForTitle = () =>{
+    inquirer
+    .prompt([
+        {
+            type: "input",
+            name: "Title",
+            message: "Enter the Title: "
+        },
+    ])
+    .then((answers) => {
+            addLine(`#${answers.title}\n`);
+            promptForDescription();
+    })
 };
 
 const promptForDescription = () => {
-    console.log(
-        "Enter a description for your project (press CTRL + D when finished):"
-    );
-    readline.prompt();
-
-    readline.on("line", (input) => {
-        addLine(input);
-        readline.prompt();
-    });
-
-    readline.on("close", () => {
-        addLine("");
-        promptForTableOfContents();
-    });
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "description",
+                message: "Enter a description for your project:",
+            },
+        ])
+        .then((answers) => {
+            addLine(`# ${answers.description}\n`);
+            promptForTableOfContents();
+        });
 };
 
 const promptForTableOfContents = () => {
-    console.log(
-        "Enter the table of contents for your README (press CTRL + D when finished, leave empty to skip):"
-    );
-    readline.prompt();
-
-    let tableOfContents = "";
-
-    readline.on("line", (input) => {
-        if (input) {
-            tableOfContents += `- ${input}\n`;
-        }
-        readline.prompt();
-    });
-
-    readline.on("close", () => {
-        if (tableOfContents) {
-            addLine("## Table of Contents\n");
-            addLine(tableOfContents);
-        }
-        promptForInstallation();
-    });
+    inquirer
+        .prompt([
+            {
+                type: "checkbox",
+                name: "tableOfContents",
+                message:
+                    "Select the sections you want to include in your README:",
+                choices: [
+                    "Installation",
+                    "Usage",
+                    "License",
+                    "Contributions",
+                    "Tests",
+                    "Media",
+                ],
+            },
+        ])
+        .then((answers) => {
+            if (answers.tableOfContents.length) {
+                addLine("## Table of Contents\n");
+                answers.tableOfContents.forEach((section) => {
+                    addLine(`- [${section}](#${section.toLowerCase()})`);
+                });
+                addLine("\n");
+            }
+            promptForInstallation();
+        });
 };
 
 const promptForInstallation = () => {
-    console.log(
-        "Enter the installation instructions for your project (press CTRL + D when finished, leave empty to skip):"
-    );
-    readline.prompt();
-
-    let installation = "";
-
-    readline.on("line", (input) => {
-        if (input) {
-            installation += `${input}\n`;
-        }
-        readline.prompt();
-    });
-
-    readline.on("close", () => {
-        if (installation) {
-            addLine("## Installation\n");
-            addLine(installation);
-        }
-        promptForUsage();
-    });
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "installation",
+                message:
+                    "Enter the installation instructions for your project:",
+            },
+        ])
+        .then((answers) => {
+            if (answers.installation) {
+                addLine("## Installation\n");
+                addLine(`${answers.installation}\n`);
+            }
+            promptForUsage();
+        });
 };
 
 const promptForUsage = () => {
-    console.log(
-        "Enter the usage information for your project (press CTRL + D when finished, leave empty to skip):"
-    );
-    readline.prompt();
-
-    let usage = "";
-
-    readline.on("line", (input) => {
-        if (input) {
-            usage += `${input}\n`;
-        }
-        readline.prompt();
-    });
-
-    readline.on("close", () => {
-        if (usage) {
-            addLine("## Usage\n");
-            addLine(usage);
-        }
-        promptForLicense();
-    });
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "usage",
+                message: "Enter the usage information for your project:",
+            },
+        ])
+        .then((answers) => {
+            if (answers.usage) {
+                addLine("## Usage\n");
+                addLine(`${answers.usage}\n`);
+            }
+            promptForLicense();
+        });
 };
 
 const promptForLicense = () => {
-    console.log(
-        "Enter the license information for your project (press CTRL + D when finished, leave empty to skip):"
-    );
-    readline.prompt();
-
-    let license = "";
-
-    readline.on("line", (input) => {
-        if (input) {
-            license += `${input}\n`;
-        }
-        readline.prompt();
-    });
-
-    readline.on("close", () => {
-        if (license) {
-            addLine("## License\n");
-            addLine(license);
-        }
-        promptForContribution();
-    });
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "license",
+                message: "Enter the license information for your project:",
+            },
+        ])
+        .then((answers) => {
+            if (answers.license) {
+                addLine("## License\n");
+                addLine(`${answers.license}\n`);
+            }
+            promptForContribution();
+        });
 };
 
 const promptForContribution = () => {
-    console.log(
-        "Enter the contribution guidelines for your project (press CTRL + D when finished, leave empty to skip):"
-    );
-    readline.prompt();
-
-    let contribution = "";
-
-    readline.on("line", (input) => {
-        if (input) {
-            contribution += `${input}\n`;
-        }
-        readline.prompt();
-    });
-
-    readline.on("close", () => {
-        if (contribution) {
-            addLine("## Contributions\n");
-            addLine(contribution);
-        }
-        promptForTests();
-    });
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "contributions",
+                message: "Enter the contribution guidelines for your project:",
+            },
+        ])
+        .then((answers) => {
+            if (answers.contributions) {
+                addLine("## Contributions\n");
+                addLine("${answers.contributions}\n");
+            }
+            promptForTests();
+        });
 };
 
 const promptForTests = () => {
-    console.log(
-        "Enter the test instructions for your project (press CTRL + D when finished, leave empty to skip):"
-    );
-    readline.prompt();
-
-    let tests = "";
-
-    readline.on("line", (input) => {
-        if (input) {
-            tests += `${input}\n`;
-        }
-        readline.prompt();
-    });
-
-    readline.on("close", () => {
-        if (tests) {
-            addLine("## Tests\n");
-            addLine(tests);
-        }
-        promptForMedia();
-    });
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "tests",
+                message: "Enter the test instructions for your project:",
+            },
+        ])
+        .then((answers) => {
+            if (answers.tests) {
+                addLine("## Tests\n");
+                addLine("${answers.tests}\n");
+            }
+            promptForMedia();
+        });
 };
 
 const promptForMedia = () => {
-    console.log(
-        "Enter the file paths of any images or videos to include in the README (press CTRL + D when finished, leave empty to skip):"
-    );
-    readline.prompt();
-
-    let media = "";
-
-    readline.on("line", (input) => {
-        if (input) {
-            if (
-                input.endsWith(".png") ||
-                input.endsWith(".jpg") ||
-                input.endsWith(".jpeg")
-            ) {
-                media += `![image](${input})\n`;
-            } else if (input.endsWith(".mp4") || input.endsWith(".gif")) {
-                media += `<video src="${input}" width="320" height="240" controls></video>\n`;
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "media",
+                message:
+                    "Enter the file paths of any media you'd like to include in your README (separated by a comma):",
+            },
+        ])
+        .then((answers) => {
+            if (answers.media) {
+                const media = answers.media.split(",");
+                if (media.length) {
+                    addLine("## Media\n");
+                    media.forEach((file) => {
+                        if (
+                            file.endsWith(".png") ||
+                            file.endsWith(".jpg") ||
+                            file.endsWith(".jpeg")
+                        ) {
+                            addLine(![image]("${file.trim()}"));
+                        } else if (
+                            file.endsWith(".mp4") ||
+                            file.endsWith(".gif")
+                        ) {
+                            addLine(
+                                <video
+                                    src="${file.trim()}"
+                                    width="320"
+                                    height="240"
+                                    controls
+                                ></video>
+                            );
+                        }
+                    });
+                    addLine("\n");
+                }
             }
-        }
-        readline.prompt();
-    });
-
-    readline.on("close", () => {
-        if (media) {
-            addLine("## Media\n");
-            addLine(media);
-        }
-        writeToFile();
-    });
+            writeReadme();
+        });
 };
 
-const writeToFile = () => {
+const writeReadme = () => {
     fs.writeFile("README.md", readme, (err) => {
         if (err) {
             console.error(err);
