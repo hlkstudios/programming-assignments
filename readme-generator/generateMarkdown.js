@@ -51,7 +51,8 @@ function renderLicenseSection(license) {
     
     This project is licensed under the ${license} license.
     
-    ${renderLicenseBadge(license)}`;
+    ${renderLicenseBadge(license)};
+    ${renderLicenseLink(license)}`
 }
 
 // Function to generate markdown for README
